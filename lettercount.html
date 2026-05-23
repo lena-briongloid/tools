@@ -7,13 +7,12 @@
 	<style>
 		body {
 			margin: 0;
-			padding: 20px;
+			padding: 40px 20px;
 			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 			background-color: #f5f7fa;
 			display: flex;
 			flex-direction: column;
 			align-items: center;
-			justify-content: center;
 			min-height: 100vh;
 			box-sizing: border-box;
 		}
@@ -74,15 +73,131 @@
 			font-weight: bold;
 			color: #1e293b;
 		}
+
+		/* 단어 빈도 섹션 */
+		.word-freq-section {
+			display: none;
+			width: 100%;
+			max-width: 600px;
+			margin-top: 32px;
+			margin-bottom: 40px;
+		}
+
+		.word-freq-section h2 {
+			font-size: 15px;
+			font-weight: 600;
+			color: #334155;
+			margin: 0 0 12px 0;
+		}
+
+		.word-freq-table-wrapper {
+			background: #fff;
+			border: 1px solid #e2e8f0;
+			border-radius: 8px;
+			overflow: hidden;
+			max-height: 540px;
+			overflow-y: auto;
+		}
+
+		.word-freq-table {
+			width: 100%;
+			border-collapse: collapse;
+			font-size: 14px;
+		}
+
+		.word-freq-table thead {
+			position: sticky;
+			top: 0;
+			z-index: 1;
+			background: #f8fafc;
+		}
+
+		.word-freq-table th {
+			padding: 10px 14px;
+			text-align: left;
+			color: #64748b;
+			font-weight: 600;
+			font-size: 11px;
+			text-transform: uppercase;
+			letter-spacing: 0.6px;
+			border-bottom: 1px solid #e2e8f0;
+		}
+
+		.word-freq-table th.col-rank {
+			width: 40px;
+			text-align: center;
+		}
+
+		.word-freq-table th.col-word {
+			width: 160px;
+		}
+
+		.word-freq-table td {
+			padding: 8px 14px;
+			color: #1e293b;
+			border-bottom: 1px solid #f1f5f9;
+			vertical-align: middle;
+		}
+
+		.word-freq-table tr:last-child td {
+			border-bottom: none;
+		}
+
+		.word-freq-table tbody tr:hover {
+			background: #f8fafc;
+		}
+
+		.cell-rank {
+			text-align: center;
+			font-size: 12px;
+			color: #94a3b8;
+			font-variant-numeric: tabular-nums;
+		}
+
+		.cell-rank.top1 { color: #f59e0b; font-weight: 700; }
+		.cell-rank.top2 { color: #94a3b8; font-weight: 700; }
+		.cell-rank.top3 { color: #b45309; font-weight: 700; }
+
+		.cell-word {
+			font-weight: 500;
+			word-break: break-all;
+		}
+
+		.freq-bar-wrap {
+			display: flex;
+			align-items: center;
+			gap: 10px;
+		}
+
+		.freq-bar-track {
+			flex: 1;
+			height: 7px;
+			background: #f1f5f9;
+			border-radius: 4px;
+			overflow: hidden;
+		}
+
+		.freq-bar {
+			height: 100%;
+			border-radius: 4px;
+			background: #3b82f6;
+		}
+
+		.freq-count {
+			font-size: 13px;
+			font-weight: 600;
+			color: #475569;
+			min-width: 28px;
+			text-align: right;
+			font-variant-numeric: tabular-nums;
+		}
 	</style>
 </head>
 <body>
 	<h1>글자수 세기</h1>
 
-	<!-- 텍스트 입력 상자 -->
 	<textarea class="text-container" id="editor" placeholder="여기에 텍스트를 입력하거나 붙여넣으세요..."></textarea>
 
-	<!-- 하단 계측 결과 UI -->
 	<div class="counter-dashboard">
 		<div class="counter-card">
 			<div class="counter-label">총 글자 수</div>
@@ -98,30 +213,87 @@
 		</div>
 	</div>
 
+	<!-- 단어 빈도 섹션 -->
+	<div class="word-freq-section" id="word-freq-section">
+		<h2>가장 자주 쓰인 단어 상위 100개</h2>
+		<div class="word-freq-table-wrapper">
+			<table class="word-freq-table">
+				<thead>
+					<tr>
+						<th class="col-rank">#</th>
+						<th class="col-word">단어</th>
+						<th>빈도</th>
+					</tr>
+				</thead>
+				<tbody id="word-freq-body"></tbody>
+			</table>
+		</div>
+	</div>
+
 	<script>
 		const editor = document.getElementById('editor');
 		const totalCharsEl = document.getElementById('total-chars');
 		const noSpacesEl = document.getElementById('no-spaces');
 		const wordCountEl = document.getElementById('word-count');
+		const wordFreqSection = document.getElementById('word-freq-section');
+		const wordFreqBody = document.getElementById('word-freq-body');
+
+		function getTopWords(text, limit = 100) {
+			const freq = {};
+			for (const token of text.trim().split(/\s+/)) {
+				// 앞뒤 문장부호 제거 후 영문은 소문자 통일
+				const word = token
+					.replace(/^[^가-힣a-zA-Z0-9]+|[^가-힣a-zA-Z0-9]+$/g, '')
+					.toLowerCase();
+				if (word.length === 0) continue;
+				freq[word] = (freq[word] || 0) + 1;
+			}
+			return Object.entries(freq)
+				.sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'ko'))
+				.slice(0, limit);
+		}
+
+		function escapeHtml(str) {
+			return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+		}
+
+		function renderWordFreq(entries) {
+			if (entries.length === 0) {
+				wordFreqSection.style.display = 'none';
+				return;
+			}
+			wordFreqSection.style.display = 'block';
+			const maxCount = entries[0][1];
+
+			wordFreqBody.innerHTML = entries.map(([word, count], i) => {
+				const pct = Math.round((count / maxCount) * 100);
+				const rankClass = i === 0 ? ' top1' : i === 1 ? ' top2' : i === 2 ? ' top3' : '';
+				return `<tr>
+					<td class="cell-rank${rankClass}">${i + 1}</td>
+					<td class="cell-word">${escapeHtml(word)}</td>
+					<td>
+						<div class="freq-bar-wrap">
+							<div class="freq-bar-track">
+								<div class="freq-bar" style="width:${pct}%"></div>
+							</div>
+							<span class="freq-count">${count}</span>
+						</div>
+					</td>
+				</tr>`;
+			}).join('');
+		}
 
 		editor.addEventListener('input', () => {
 			const text = editor.value;
 
-			// 1. 총 글자 수
-			const totalChars = text.length;
+			totalCharsEl.textContent = text.length;
+			noSpacesEl.textContent = text.replace(/\s/g, '').length;
 
-			// 2. 공백(스페이스, 탭, 줄바꿈 등)을 제외한 총 글자 수
-			const noSpaces = text.replace(/\s/g, '').length;
-
-			// 3. 단어 수 계측
-			// 트림하고 하나 이상의 공백(\s+)을 기준으로 쪼갬
-			const trimmedText = text.trim();
-			const wordCount = trimmedText === '' ? 0 : trimmedText.split(/\s+/).length;
-
-			// UI에 값 업데이트
-			totalCharsEl.textContent = totalChars;
-			noSpacesEl.textContent = noSpaces;
+			const trimmed = text.trim();
+			const wordCount = trimmed === '' ? 0 : trimmed.split(/\s+/).length;
 			wordCountEl.textContent = wordCount;
+
+			renderWordFreq(trimmed === '' ? [] : getTopWords(text));
 		});
 	</script>
 </body>
