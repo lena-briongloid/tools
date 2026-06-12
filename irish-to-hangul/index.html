@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>아일랜드어 한글 표기 변환기</title>
+	<link rel="stylesheet" href="style.css">
+</head>
+<body>
+	<header>
+		<div class="tricolor-bar"></div>
+		<h1>Gaeilge → 한글</h1>
+		<p class="subtitle">아일랜드어 텍스트를 입력하면 한글 표기로 변환합니다.</p>
+		<p class="subtitle">공식 외래어 표기법이 제정되지 않았으므로 <a href="https://lenabriongloid.tistory.com/2">류은결 가안</a>을 사용합니다.</p>
+	</header>
+
+	<main>
+		<section class="panel panel-input">
+			<label for="irish-input">아일랜드어 입력</label>
+			<textarea id="irish-input" rows="4"
+				placeholder="Scríobh abairt as Gaeilge anseo…"
+				spellcheck="false"></textarea>
+			<div class="toggle-row">
+				<span class="toggle-name" id="alt-toggle-name">대용 한글 표기 사용</span>
+				<button type="button" class="info-tip" aria-describedby="alt-tip">?
+					<span class="tip-popup" id="alt-tip" role="tooltip">“댠”, “쿌”, “퓍” 같은 글자가 깨져서 고민이라면 ON!</span>
+				</button>
+				<span class="toggle-state state-on">ON</span>
+				<label class="switch">
+					<input type="checkbox" id="alt-hangul-toggle" aria-labelledby="alt-toggle-name">
+					<span class="slider"></span>
+				</label>
+				<span class="toggle-state state-off">OFF</span>
+			</div>
+		</section>
+
+		<section class="panel panel-output">
+			<h2>한글 변환</h2>
+			<div id="hangul-output" aria-live="polite"></div>
+		</section>
+
+		<aside class="notice">
+			<h2>※ 알림</h2>
+			<p>본 표기법은 일관성에 중점을 두었으며, 실제 아일랜드어 원어민의 발음을 완벽하게 반영하지 못할 수 있습니다.</p>
+			<p>본 표기법은 최신 아일랜드어 정서법인 <em>An Caighdeán Oifigiúil</em>을 전제로 합니다. 옛 방식으로 표기한 단어는 올바르게 변환하지 못할 수 있습니다.</p>
+		</aside>
+	</main>
+
+	<footer>
+		<div class="footer-inner">
+			<p>트위터(X): <a href="https://x.com/lena_briongloid" target="_blank">@lena_briongloid</a></p>
+			<p id="copyright"><em>Copyright 2026. 유월공방 All rights reserved. Latest revision: <span id="RevisionDate">12 Jun 2026</span></em></p>
+		</div>
+	</footer>
+
+	<script src="sound.js"></script>
+	<script src="ipa-to-hangul.js"></script>
+	<script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,304 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Gowun+Batang:wght@400;700&family=Stylish&display=swap');
+
+html {
+	font-size: 24px;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+:root {
+	--pastel-green: #cde7d4;
+	--pastel-green-deep: #6f9b7e;
+	--pastel-orange: #f8ddc4;
+	--pastel-orange-deep: #cf9a6e;
+	--cream: #fdfcf7;
+	--ink: #4a4a42;
+}
+
+body {
+	margin: 0;
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+	font-family: 'Cormorant Garamond', 'Gowun Batang', serif;
+	text-align: center;
+	color: var(--ink);
+	background: linear-gradient(135deg, var(--pastel-green) 0%, var(--cream) 50%, var(--pastel-orange) 100%);
+}
+
+a {
+	color: var(--pastel-green-deep);
+	font-weight: 700;
+	text-decoration: underline;
+	text-decoration-color: var(--pastel-orange-deep);
+	text-decoration-thickness: 1px;
+	text-underline-offset: 0.15em;
+	transition: color 0.2s, text-decoration-color 0.2s;
+}
+
+a:hover,
+a:focus-visible {
+	color: var(--pastel-orange-deep);
+	text-decoration-color: var(--pastel-green-deep);
+}
+
+a:focus-visible {
+	outline: 2px solid var(--pastel-green-deep);
+	outline-offset: 2px;
+	border-radius: 0.1rem;
+}
+
+.tricolor-bar {
+	height: 0.4rem;
+	background: linear-gradient(to right,
+		var(--pastel-green) 0 33.3%,
+		var(--cream) 33.3% 66.6%,
+		var(--pastel-orange) 66.6% 100%);
+}
+
+header h1 {
+	font-family: 'Stylish', 'Cormorant Garamond', sans-serif;
+	font-size: 2.2rem;
+	margin: 1rem 0 0.6rem;
+	color: var(--pastel-green-deep);
+}
+
+.subtitle {
+	font-size: 0.75rem;
+	margin: 0 0 1.2rem;
+	color: var(--pastel-orange-deep);
+}
+
+main {
+	/* flex column인 body 안에서 auto 마진이 수축을 유발하지 않도록 너비를 명시 */
+	width: 100%;
+	max-width: 28rem;
+	margin: 0 auto;
+	padding: 0 1rem 2rem;
+}
+
+.panel {
+	background: rgba(255, 255, 255, 0.65);
+	border: 1px solid var(--pastel-green);
+	border-radius: 0.5rem;
+	padding: 1rem;
+	margin-bottom: 1.2rem;
+	box-shadow: 0 0.1rem 0.4rem rgba(111, 155, 126, 0.15);
+}
+
+.panel label,
+.panel h2 {
+	display: block;
+	font-family: 'Stylish', 'Gowun Batang', sans-serif;
+	font-size: 0.9rem;
+	font-weight: 400;
+	margin: 0 0 0.5rem;
+	color: var(--pastel-green-deep);
+}
+
+#irish-input {
+	width: 100%;
+	min-height: 4.5rem;
+	max-height: 7.5rem;
+	resize: vertical;
+	font-family: inherit;
+	font-size: 1rem;
+	line-height: 1.5;
+	text-align: center;
+	color: var(--ink);
+	background: var(--cream);
+	border: 1px solid var(--pastel-orange);
+	border-radius: 0.3rem;
+	padding: 0.5rem;
+}
+
+.toggle-row {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.3rem;
+	margin-top: 0.5rem;
+	font-size: 0.7rem;
+	font-family: 'Gowun Batang', serif;
+	line-height: 1;
+}
+
+.toggle-name {
+	color: var(--pastel-green-deep);
+}
+
+.info-tip {
+	position: relative;
+	width: 0.7rem;
+	height: 0.7rem;
+	margin-right: 0.2rem;
+	padding: 0;
+	border: 1px solid var(--pastel-orange-deep);
+	border-radius: 50%;
+	background: var(--cream);
+	color: var(--pastel-orange-deep);
+	font-family: inherit;
+	font-size: 0.5rem;
+	line-height: 1;
+	cursor: help;
+}
+
+.tip-popup {
+	display: none;
+	position: absolute;
+	bottom: calc(100% + 0.3rem);
+	left: 50%;
+	transform: translateX(-50%);
+	width: max-content;
+	max-width: 11rem;
+	padding: 0.3rem 0.5rem;
+	background: var(--cream);
+	border: 1px solid var(--pastel-green);
+	border-radius: 0.3rem;
+	box-shadow: 0 0.1rem 0.4rem rgba(111, 155, 126, 0.25);
+	font-size: 0.55rem;
+	line-height: 1.5;
+	color: var(--ink);
+	text-align: center;
+	z-index: 10;
+}
+
+.info-tip:hover .tip-popup,
+.info-tip:focus .tip-popup {
+	display: block;
+}
+
+.toggle-state {
+	font-size: 0.55rem;
+	letter-spacing: 0.05em;
+	color: var(--ink);
+	opacity: 0.35;
+	transition: opacity 0.2s, color 0.2s;
+}
+
+.toggle-row:has(input:checked) .state-on {
+	opacity: 1;
+	color: var(--pastel-green-deep);
+	font-weight: 700;
+}
+
+.toggle-row:not(:has(input:checked)) .state-off {
+	opacity: 1;
+	color: var(--pastel-orange-deep);
+	font-weight: 700;
+}
+
+.switch {
+	position: relative;
+	display: inline-block;
+	width: 1.6rem;
+	height: 0.8rem;
+	margin-top: 1rem;
+}
+
+.switch input {
+	opacity: 0;
+	width: 0;
+	height: 0;
+}
+
+.slider {
+	position: absolute;
+	inset: 0;
+	background: var(--pastel-orange);
+	border-radius: 0.4rem;
+	cursor: pointer;
+	transition: background 0.2s;
+}
+
+.slider::before {
+	content: "";
+	position: absolute;
+	width: 0.6rem;
+	height: 0.6rem;
+	top: 0.1rem;
+	right: 0.1rem;
+	background: var(--cream);
+	border-radius: 50%;
+	transition: transform 0.2s;
+}
+
+.switch input:checked + .slider {
+	background: var(--pastel-green-deep);
+}
+
+.switch input:checked + .slider::before {
+	transform: translateX(-0.8rem);
+}
+
+.switch input:focus-visible + .slider {
+	outline: 2px solid var(--pastel-green-deep);
+	outline-offset: 2px;
+}
+
+#irish-input:focus {
+	outline: 2px solid var(--pastel-green-deep);
+	outline-offset: 2px;
+}
+
+#hangul-output {
+	min-height: 3rem;
+	font-family: 'Gowun Batang', 'Cormorant Garamond', serif;
+	font-size: 1rem;
+	line-height: 1.6;
+	white-space: pre-wrap;
+	word-break: keep-all;
+}
+
+#hangul-output:empty::before {
+	content: '변환 결과가 여기에 표시됩니다';
+	color: var(--pastel-orange-deep);
+	opacity: 0.6;
+	font-size: 0.75rem;
+}
+
+.notice {
+	margin-top: 0.2rem;
+	font-size: 0.6rem;
+	color: var(--ink);
+	opacity: 0.75;
+}
+
+.notice h2 {
+	font-family: 'Stylish', 'Gowun Batang', sans-serif;
+	font-size: 0.7rem;
+	font-weight: 400;
+	margin: 0 0 0.3rem;
+	color: var(--pastel-orange-deep);
+}
+
+.notice p {
+	margin: 0 0 0.3rem;
+	line-height: 1.6;
+	word-break: keep-all;
+}
+
+footer {
+	margin-top: auto;
+	padding: 1rem 0;
+	font-size: 0.6rem;
+	color: var(--pastel-green-deep);
+	background: rgba(255, 255, 255, 0.4);
+	border-top: 1px solid var(--pastel-green);
+}
+
+footer p {
+	margin: 0;
+}
+
+.footer-inner {
+	width: 100%;
+	max-width: 28rem;
+	margin: 0 auto;
+	padding: 0 1rem;
+	box-sizing: border-box;
+	text-align: right;
+	line-height: 200%;
+}
